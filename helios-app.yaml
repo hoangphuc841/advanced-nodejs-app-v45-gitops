@@ -1,0 +1,39 @@
+apiVersion: app.helios.io/v1alpha1
+kind: HeliosApp
+metadata:
+  name: advanced-nodejs-app-v45
+  namespace: default
+spec:
+
+  description: "Managed by Helios Operator"
+  owner: 
+  
+  # Required Git/Docker Info
+  imageRepo: hoangphuc842/advanced-nodejs-app-v45
+  gitRepo: "https://github.com/hoangphuc841/advanced-nodejs-app-v45.git"
+  gitopsRepo: https://github.com/hoangphuc841/advanced-nodejs-app-v45-gitops
+  gitopsPath: "apps/advanced-nodejs-app-v45" # Assumed path
+  port: 8080
+  replicas: 1
+  testCommand: npm install && npm test
+  
+  # Webhook Config
+  webhookDomain: unstaggering-unoptionally-hugh.ngrok-free.dev/
+  webhookSecret: "github-credentials-advanced-nodejs-app-v45"
+  gitopsSecretRef: "github-credentials-advanced-nodejs-app-v45"
+
+  components:
+    - name: advanced-nodejs-app-v45-backend
+      type: web-service
+      properties:
+        image: hoangphuc842/advanced-nodejs-app-v45:latest
+        port: 8080
+        replicas: 1
+        env:
+          - name: NODE_ENV
+            value: "production"
+      traits:
+        - type: service
+          properties:
+            port: 8080
+            targetPort: 8080

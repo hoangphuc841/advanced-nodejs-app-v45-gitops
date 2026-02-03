@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: advanced-nodejs-app-v45-pipeline-run
+  annotations:
+    janus-idp.io/tekton: advanced-nodejs-app-v45-service
+spec:
+  serviceAccountName: pipeline
+  pipelineRef:
+    name: from-code-to-cluster
+  params:
+  - name: image-repo
+    value: index.docker.io/hoangphuc842/advanced-nodejs-app-v45
+  - name: app-repo-url
+    value: https://github.com/hoangphuc841/advanced-nodejs-app-v45.git
+  - name: app-repo-revision
+    value: main
+  - name: gitops-repo-url
+    value: https://github.com/hoangphuc841/advanced-nodejs-app-v45-gitops
+  - name: gitops-repo-branch
+    value: main
+  - name: manifest-path-in-gitops-repo
+    value: ./deployment.yaml
+  - name: docker-secret
+    value: docker-credentials 
+  - name: test-command
+    value: npm install && npm test
+  # (Optional override – can be omitted to use the pipeline default)
+  # - name: test-image
+  #   value: node:20
+  workspaces:
+  - name: source-workspace
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
